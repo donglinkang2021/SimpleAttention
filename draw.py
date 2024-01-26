@@ -9,8 +9,8 @@ def show_attention(
         cmap = 'Reds'
     ):
     """
-    画出注意力权重图
-
+    visualize attention weights
+    
     Parameters
     ----------
     @param attention: torch.Tensor
@@ -40,7 +40,7 @@ def show_attention_batch(
         cmap='Reds'
     ):
     """
-    画出注意力权重图
+    visualize attention weights in batch
 
     Parameters
     ----------
