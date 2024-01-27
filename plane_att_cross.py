@@ -4,6 +4,7 @@ import torch.nn.functional as F
 import numpy as np
 from torch.utils.data import Dataset, DataLoader
 from dataset import regress_plane
+from einops import rearrange
 
 np.random.seed(2024)
 torch.manual_seed(2024)
@@ -39,12 +40,12 @@ class PlaneDataset(Dataset):
     def __getitem__(self, idx):
         return self.X[idx], self.label[idx]
 
+query_set = PlaneDataset(query_samples, noise) # we use other dataset for query later
 key_set = PlaneDataset(key_samples, noise)
-query_set = PlaneDataset(query_samples, noise)
-test_set = PlaneDataset(test_samples, noise)
-keyloader = DataLoader(key_set, batch_size=batch_size, shuffle=True)
+value_set = PlaneDataset(test_samples, noise)
 queryloader = DataLoader(query_set, batch_size=batch_size, shuffle=True)
-testloader = DataLoader(test_set, batch_size=batch_size, shuffle=True)
+keyloader = DataLoader(key_set, batch_size=batch_size, shuffle=True)
+testloader = DataLoader(value_set, batch_size=batch_size, shuffle=True)
 
 
 class PlaneModel(nn.Module):
