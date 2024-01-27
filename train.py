@@ -3,8 +3,8 @@ import torch.nn as nn
 import torch.nn.functional as F
 import numpy as np
 from torch.utils.data import Dataset, DataLoader
-from dataset import regress_gaussian
-from model import Heads_Reg_Gaussian
+from dataset import regress_plane
+from model import Heads_Reg
 
 np.random.seed(2024)
 torch.manual_seed(2024)
@@ -19,8 +19,8 @@ eval_interval = 10
 learning_rate = 3e-2
 
 input_dim = 2 
-n_embd = 64 # n_embd:param 8:33 16:65 32:129 64:257
-n_head = 64
+n_embd = 8 # n_embd:param 8:33 16:65 32:129 64:257
+n_head = 4
 output_dim = 1
 
 
@@ -29,7 +29,7 @@ class RegressionDataset(Dataset):
         super().__init__()
         self.num_samples = num_samples
         self.noise = noise
-        self.x, self.y, self.label = regress_gaussian(num_samples, noise)
+        self.x, self.y, self.label = regress_plane(num_samples, noise)
         self.x = torch.from_numpy(self.x).float()
         self.y = torch.from_numpy(self.y).float()
         self.X = torch.stack([self.x, self.y], dim=1)
@@ -47,7 +47,7 @@ trainloader = DataLoader(trainset, batch_size=batch_size, shuffle=True)
 valloader = DataLoader(valset, batch_size=batch_size, shuffle=True)
     
 
-model = Heads_Reg_Gaussian(input_dim, n_embd, n_head, output_dim)
+model = Heads_Reg(input_dim, n_embd, n_head, output_dim)
 criterion = nn.MSELoss()
 optimizer = torch.optim.Adam(model.parameters(), lr=learning_rate)
 
