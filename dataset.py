@@ -160,6 +160,3 @@ def classify_xor_data(
     label = ((x + noise_x) * (y + noise_y) >= 0) * 2 - 1
 
     return x, y, label
-    
-    
-

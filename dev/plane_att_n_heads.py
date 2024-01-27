@@ -4,7 +4,7 @@ import torch.nn.functional as F
 import numpy as np
 from torch.utils.data import Dataset, DataLoader
 from dataset import regress_plane
-from einops import rearrange
+from model import HeadsReg
 
 np.random.seed(2024)
 torch.manual_seed(2024)
@@ -20,7 +20,7 @@ learning_rate = 1e-2
 
 input_dim = 2 
 n_embd = 8
-n_batchs = 16 # just n_head -> n_batchs
+n_head = 4
 output_dim = 1
 
 
@@ -43,36 +43,10 @@ class PlaneDataset(Dataset):
 
 trainset = PlaneDataset(train_samples, noise)
 valset = PlaneDataset(val_samples, noise)
-trainloader = DataLoader(trainset, batch_size=batch_size, shuffle=True, drop_last=True)
-valloader = DataLoader(valset, batch_size=batch_size, shuffle=True, drop_last=True)
-
-class PlaneModel(nn.Module):
-    def __init__(self, input_dim, n_embd, n_batchs, output_dim):
-        super().__init__()
-        self.n_embd = n_embd
-        self.n_batchs = n_batchs
-        self.embed = nn.Linear(input_dim, n_embd)
-        self.pred = nn.Linear(n_embd, output_dim)
-        self.apply(self._init_weights)
-        print(f"number of parameters: {self.get_num_params()/1e6:.6f} M ")
-
-    def _init_weights(self, module):
-        if isinstance(module, nn.Linear):
-            nn.init.normal_(module.weight, mean=0.0, std=0.02)
-            if module.bias is not None:
-                nn.init.zeros_(module.bias)
-
-    def get_num_params(self):
-        return sum(p.numel() for p in self.parameters())
-
-    def forward(self, x):
-        x = self.embed(x)
-        x = rearrange(x, '(nB Bs) d -> Bs nB d', nB=self.n_batchs)
-        attention = F.scaled_dot_product_attention(x, x, x)
-        attention = rearrange(attention, 'Bs nB d -> (nB Bs) d')
-        return self.pred(attention)
+trainloader = DataLoader(trainset, batch_size=batch_size, shuffle=True)
+valloader = DataLoader(valset, batch_size=batch_size, shuffle=True)
     
-model = PlaneModel(input_dim, n_embd, n_batchs, output_dim)
+model = HeadsReg(input_dim, n_embd, n_head, output_dim)
 criterion = nn.MSELoss()
 optimizer = torch.optim.Adam(model.parameters(), lr=learning_rate)
 

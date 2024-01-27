@@ -4,6 +4,7 @@ import torch.nn.functional as F
 import numpy as np
 from torch.utils.data import Dataset, DataLoader
 from dataset import regress_plane
+from model import LinearReg
 
 np.random.seed(2024)
 torch.manual_seed(2024)
@@ -42,29 +43,8 @@ trainset = PlaneDataset(train_samples, noise)
 valset = PlaneDataset(val_samples, noise)
 trainloader = DataLoader(trainset, batch_size=batch_size, shuffle=True)
 valloader = DataLoader(valset, batch_size=batch_size, shuffle=True)
-
-class PlaneModel(nn.Module):
-    def __init__(self, input_dim, n_hid, output_dim):
-        super().__init__()
-        self.fc1 = nn.Linear(input_dim, n_hid)
-        self.fc2 = nn.Linear(n_hid, output_dim)
-        self.apply(self._init_weights)
-        print(f"number of parameters: {self.get_num_params()/1e6:.6f} M ")
-
-    def _init_weights(self, module):
-        if isinstance(module, nn.Linear):
-            nn.init.normal_(module.weight, mean=0.0, std=0.02)
-            if module.bias is not None:
-                nn.init.zeros_(module.bias)
-
-    def get_num_params(self):
-        return sum(p.numel() for p in self.parameters())
-
-    def forward(self, x):
-        x = F.relu(self.fc1(x))
-        return self.fc2(x)
     
-model = PlaneModel(input_dim, n_hid, output_dim)
+model = LinearReg(input_dim, n_hid, output_dim)
 criterion = nn.MSELoss()
 optimizer = torch.optim.Adam(model.parameters(), lr=learning_rate)
 
