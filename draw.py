@@ -90,7 +90,7 @@ def draw_dataset(dataset:Dataset, title:str):
     plt.show()
 
 @torch.no_grad()
-def draw_decision_boundary(model:nn.Module, dataset:Dataset, title:str):
+def draw_decision_boundary(model:nn.Module, dataset:Dataset, title:str, is_save:bool=False):
     """
     draw decision boundary of a model on a 2D dataset
     """
@@ -119,4 +119,24 @@ def draw_decision_boundary(model:nn.Module, dataset:Dataset, title:str):
     if title != None:
         plt.title(title)
     plt.colorbar()
+    if is_save:
+        png_name = title.replace(" ", "_").replace(":", "_").replace(",", "")
+        plt.savefig(f"{png_name}.png")
+    plt.show()
+
+def draw_loss(iter_list, train_loss, val_loss, title:str, is_save:bool=False):
+    """
+    draw loss
+    """
+    plt.figure(figsize=(8, 6))
+    plt.plot(iter_list, train_loss, label='train')
+    plt.plot(iter_list, val_loss, label='val')
+    plt.legend()
+    plt.xlabel('steps')
+    plt.ylabel('loss')
+    if title != None:
+        plt.title(title)
+    if is_save:
+        png_name = title.replace(" ", "_").replace(":", "_").replace(",", "")
+        plt.savefig(f"{png_name}.png")
     plt.show()

@@ -4,23 +4,23 @@ import torch.nn.functional as F
 import numpy as np
 from torch.utils.data import Dataset, DataLoader
 from dataset import regress_gaussian
-from model import HeadsReg
+from model import BaseModel
 
 np.random.seed(2024)
 torch.manual_seed(2024)
 
 train_samples = 500
 val_samples = 500
-noise = 0.2
+noise = 0.01 # a good para to test the model performance
 
 batch_size = 64
-num_epochs = 3
-eval_interval = 1
-learning_rate = 1e-3
+num_epochs = 30
+eval_interval = 10
+learning_rate = 3e-2
 
 input_dim = 2 
-n_embd = 32
-n_head = 4
+n_embd = 8
+# n_head = 4
 output_dim = 1
 
 
@@ -46,7 +46,22 @@ valset = RegressionDataset(val_samples, noise)
 trainloader = DataLoader(trainset, batch_size=batch_size, shuffle=True)
 valloader = DataLoader(valset, batch_size=batch_size, shuffle=True)
     
-model = HeadsReg(input_dim, n_embd, n_head, output_dim)
+class LinearModel(BaseModel):
+    """Linear regression model with one hidden layer"""
+    def __init__(self, input_dim, n_embd, output_dim):
+        super().__init__()
+        self.fc1 = nn.Linear(input_dim, n_embd)
+        self.fc2 = nn.Linear(n_embd, n_embd)
+        self.fc3 = nn.Linear(n_embd, output_dim)
+        self.apply(self._init_weights)
+        print(f"number of parameters: {self.get_num_params()/1e6:.6f} M ")
+
+    def forward(self, x):
+        x = F.tanh(self.fc1(x))
+        x = F.tanh(self.fc2(x))
+        return self.fc3(x)
+
+model = LinearModel(input_dim, n_embd, output_dim)
 criterion = nn.MSELoss()
 optimizer = torch.optim.Adam(model.parameters(), lr=learning_rate)
 
@@ -64,6 +79,9 @@ def estimate_loss():
     model.train()
     return out
 
+iter_list = []
+train_losses = []
+val_losses = []
 n_batches = len(trainloader)
 for epoch in range(num_epochs):
     for i, (x, y) in enumerate(trainloader):
@@ -72,6 +90,9 @@ for epoch in range(num_epochs):
         if iter % eval_interval == 0 or iter == num_epochs * n_batches - 1:
             losses = estimate_loss()
             print(f"step {iter}: train loss {losses['train']:.4f}, val loss {losses['val']:.4f}")
+            iter_list.append(iter)
+            train_losses.append(losses['train'])
+            val_losses.append(losses['val'])
 
         y_pred = model(x)
         loss = criterion(y_pred, y.unsqueeze(1))
