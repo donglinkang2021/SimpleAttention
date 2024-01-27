@@ -4,7 +4,7 @@ import torch.nn.functional as F
 import numpy as np
 from torch.utils.data import Dataset, DataLoader
 from dataset import regress_gaussian
-from model import BaseModel
+from model import Heads_Reg_Gaussian
 
 np.random.seed(2024)
 torch.manual_seed(2024)
@@ -19,8 +19,8 @@ eval_interval = 10
 learning_rate = 3e-2
 
 input_dim = 2 
-n_embd = 8
-# n_head = 4
+n_embd = 64 # n_embd:param 8:33 16:65 32:129 64:257
+n_head = 64
 output_dim = 1
 
 
@@ -46,22 +46,8 @@ valset = RegressionDataset(val_samples, noise)
 trainloader = DataLoader(trainset, batch_size=batch_size, shuffle=True)
 valloader = DataLoader(valset, batch_size=batch_size, shuffle=True)
     
-class LinearModel(BaseModel):
-    """Linear regression model with one hidden layer"""
-    def __init__(self, input_dim, n_embd, output_dim):
-        super().__init__()
-        self.fc1 = nn.Linear(input_dim, n_embd)
-        self.fc2 = nn.Linear(n_embd, n_embd)
-        self.fc3 = nn.Linear(n_embd, output_dim)
-        self.apply(self._init_weights)
-        print(f"number of parameters: {self.get_num_params()/1e6:.6f} M ")
 
-    def forward(self, x):
-        x = F.tanh(self.fc1(x))
-        x = F.tanh(self.fc2(x))
-        return self.fc3(x)
-
-model = LinearModel(input_dim, n_embd, output_dim)
+model = Heads_Reg_Gaussian(input_dim, n_embd, n_head, output_dim)
 criterion = nn.MSELoss()
 optimizer = torch.optim.Adam(model.parameters(), lr=learning_rate)
 

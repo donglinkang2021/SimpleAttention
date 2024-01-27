@@ -85,3 +85,45 @@ class Batchs_Reg_Plane(BaseModel):
         attention = F.scaled_dot_product_attention(x, x, x)
         attention = rearrange(attention, 'Bs nB d -> (nB Bs) d')
         return self.pred(attention)
+    
+
+class Linear_Reg_Gaussian(BaseModel):
+    """Linear regression model with two hidden layer"""
+    def __init__(self, input_dim, n_embd, output_dim):
+        super().__init__()
+        self.fc1 = nn.Linear(input_dim, n_embd)
+        self.fc2 = nn.Linear(n_embd, n_embd)
+        self.fc3 = nn.Linear(n_embd, output_dim)
+        self.apply(self._init_weights)
+        print(f"number of parameters: {self.get_num_params()/1e6:.6f} M ")
+
+    def forward(self, x):
+        x = F.tanh(self.fc1(x))
+        x = F.tanh(self.fc2(x))
+        return self.fc3(x)
+    
+
+class Heads_Reg_Gaussian(BaseModel):
+    """Regression model with multi-head between-heads attention"""
+    def __init__(self, input_dim, n_embd, n_head, output_dim):
+        super().__init__()
+        self.n_embd = n_embd
+        self.n_head = n_head
+        self.embed = nn.Linear(input_dim, n_embd)
+        self.pred = nn.Linear(n_embd, output_dim)
+        self.apply(self._init_weights)
+        print(f"number of parameters: {self.get_num_params()/1e6:.6f} M ")
+    
+    def get_wei(self, x):
+        x = self.embed(x)
+        x = rearrange(x, 'B (nh hs) -> B nh hs', nh=self.n_head)
+        wei = x @ x.transpose(-2, -1) / math.sqrt(self.n_embd)
+        wei = F.softmax(wei, dim=-1)
+        return wei
+
+    def forward(self, x):
+        x = self.embed(x)
+        x = rearrange(x, 'B (nh hs) -> B nh hs', nh=self.n_head)
+        attention = F.scaled_dot_product_attention(x, x, x)
+        attention = rearrange(attention, 'B nh hs -> B (nh hs)')
+        return self.pred(attention)
