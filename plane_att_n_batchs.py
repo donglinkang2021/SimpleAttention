@@ -1,7 +1,6 @@
 import torch
 import torch.nn as nn
 import torch.nn.functional as F
-import math
 import numpy as np
 from torch.utils.data import Dataset, DataLoader
 from dataset import regress_plane
