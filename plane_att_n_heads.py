@@ -53,7 +53,6 @@ class PlaneModel(nn.Module):
         self.n_embd = n_embd
         self.n_head = n_head
         self.embed = nn.Linear(input_dim, n_embd)
-        self.c_attn = nn.Linear(n_embd, 3 * n_embd, bias=False)
         self.pred = nn.Linear(n_embd, output_dim)
         self.apply(self._init_weights)
         print(f"number of parameters: {self.get_num_params()/1e6:.6f} M ")
@@ -69,14 +68,8 @@ class PlaneModel(nn.Module):
 
     def forward(self, x):
         x = self.embed(x)
-        q, k, v = self.c_attn(x).split(self.n_embd, dim=-1)
-        q = rearrange(q, 'B (nh hs) -> B nh hs', nh=self.n_head)
-        k = rearrange(k, 'B (nh hs) -> B nh hs', nh=self.n_head)
-        v = rearrange(v, 'B (nh hs) -> B nh hs', nh=self.n_head)
-        # here our information communicated between heads
-        # if our qk shape is B nh T hs, then
-        # our information communicated between T 
-        attention = F.scaled_dot_product_attention(q, k, v)
+        x = rearrange(x, 'B (nh hs) -> B nh hs', nh=self.n_head)
+        attention = F.scaled_dot_product_attention(x, x, x)
         attention = rearrange(attention, 'B nh hs -> B (nh hs)')
         return self.pred(attention)
     
