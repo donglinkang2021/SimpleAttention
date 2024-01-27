@@ -20,7 +20,7 @@ class BaseModel(nn.Module):
     def forward(self, x):
         raise NotImplementedError
 
-class LinearReg(BaseModel):
+class Linear_Reg_Plane(BaseModel):
     """Linear regression model with one hidden layer"""
     def __init__(self, input_dim, n_hid, output_dim):
         super().__init__()
@@ -34,7 +34,7 @@ class LinearReg(BaseModel):
         return self.fc2(x)
     
 
-class HeadsReg(BaseModel):
+class Heads_Reg_Plane(BaseModel):
     """Regression model with multi-head between-heads attention"""
     def __init__(self, input_dim, n_embd, n_head, output_dim):
         super().__init__()
@@ -60,7 +60,7 @@ class HeadsReg(BaseModel):
         return self.pred(attention)
     
 
-class BatchsReg(BaseModel):
+class Batchs_Reg_Plane(BaseModel):
     """Regression model with between-batchs attention"""
     def __init__(self, input_dim, n_embd, n_batchs, output_dim):
         super().__init__()
