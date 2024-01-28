@@ -43,3 +43,14 @@ pip install torch einops
         </td>
     </tr>
 </table>
+
+## Model
+
+- take regress gaussian as example
+- MLP: 2 hidden layer, 32 hidden units (105 para), tanh activation 
+- Heads: 1 hidden layer, 8 hidden units (**33** para), **no activation** 
+
+| Model | Final Output | Hidden |
+| :---: | :---: | :---: |
+| MLP | ![MLP](./visualize_train/linear/fin_16.gif) | ![MLP](./visualize_train/linear/hid_16.gif) |
+| Heads | ![Heads](./visualize_train/heads/fin_16.gif) | ![Heads](./visualize_train/heads/hid_16.gif) |

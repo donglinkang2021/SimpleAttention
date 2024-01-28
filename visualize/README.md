@@ -1,6 +1,6 @@
 # README
 
-Here we make some visualizations of the result. To take a look at the result, please run the following command **in parent directory `simpleAttention`**:
+Here we make some visualizations of the result differement model and dataset. To take a look at the result, please run the following command **in parent directory `simpleAttention`**:
 
 ```bash
 python visualize/result.py

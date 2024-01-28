@@ -14,12 +14,12 @@ val_samples = 500
 noise = 0.01 # a good para to test the model performance
 
 batch_size = 64
-num_epochs = 30
+num_epochs = 25
 eval_interval = 10
 learning_rate = 3e-2
 
 input_dim = 2 
-n_embd = 32 # att: n_embd:param 4:17 8:33 16:65 32:129 64:257
+n_embd = 8 # att: n_embd:param 4:17 8:33 16:65 32:129 64:257
 # n_head = 4
 output_dim = 1
 
