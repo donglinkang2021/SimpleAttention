@@ -1,0 +1,26 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="styles.css">
+    <title>Image Generator</title>
+</head>
+<body>
+
+    <label for="graphName">Graph Name:</label>
+    <select id="graphName" onchange="updateDropdowns()"></select>
+
+    <label for="modelName">Model Name:</label>
+    <select id="modelName" onchange="updateDropdowns()"></select>
+
+    <label for="datasetName">Dataset Name:</label>
+    <select id="datasetName" onchange="updateDropdowns()"></select>
+
+    <br>
+
+    <div id="imageContainer"></div>
+
+    <script src="script.js"></script>
+</body>
+</html>
