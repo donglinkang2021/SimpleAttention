@@ -6,49 +6,44 @@ const datasetOptions = ['regress_plane', 'regress_gaussian'];
 
 
 window.onload = function() {
-    // Populate dropdowns
-    const graphDropdown = document.getElementById('graphName');
-    graphDropdown.innerHTML = '';
-    graphOptions.forEach(option => {
-        const newOption = document.createElement('option');
-        newOption.value = option;
-        newOption.text = option;
-        graphDropdown.add(newOption);
-    });
-
-    const modelDropdown = document.getElementById('modelName');
-    modelDropdown.innerHTML = '';
-    modelOptions.forEach(option => {
-        const newOption = document.createElement('option');
-        newOption.value = option;
-        newOption.text = option;
-        modelDropdown.add(newOption);
-    });
-
-    const datasetDropdown = document.getElementById('datasetName');
-    datasetDropdown.innerHTML = '';
-    datasetOptions.forEach(option => {
-        const newOption = document.createElement('option');
-        newOption.value = option;
-        newOption.text = option;
-        datasetDropdown.add(newOption);
-    });
-
-    // initialize dropdowns
+    populateDropdowns();
     updateDropdowns();
+}
+
+// Function to populate dropdowns with data
+function populateDropdowns(){
+    const graphDropdown = document.getElementById('graphName');
+    const modelDropdown = document.getElementById('modelName');
+    const datasetDropdown = document.getElementById('datasetName');
+
+    clearDropdown(graphDropdown);
+    clearDropdown(modelDropdown);
+    clearDropdown(datasetDropdown);
+
+    graphOptions.forEach(option => addOptionToDropdown(graphDropdown, option));
+    modelOptions.forEach(option => addOptionToDropdown(modelDropdown, option));
+    datasetOptions.forEach(option => addOptionToDropdown(datasetDropdown, option));
+}
+
+// Function to clear dropdown options
+function clearDropdown(dropdown) {
+    dropdown.innerHTML = '';
+}
+
+// Function to add option to dropdown
+function addOptionToDropdown(dropdown, option) {
+    const newOption = document.createElement('option');
+    newOption.value = option;
+    newOption.text = option;
+    dropdown.add(newOption);
 }
 
 // Function to update dropdowns based on selected options
 function updateDropdowns() {
-    // Update model dropdown based on selected graph
     const selectedGraph = document.getElementById('graphName').value;
     const selectedModel = document.getElementById('modelName').value;
     const selectedDataset = document.getElementById('datasetName').value;
-
-    // Call the get_png_name function with selected options
     const imagePath = get_png_name(selectedGraph, selectedModel, selectedDataset);
-
-    // Display the image path or generate image display logic here
     const imageContainer = document.getElementById('imageContainer');
     imageContainer.innerHTML = `<img src="${imagePath}" alt="Generated Image">`;
 }
