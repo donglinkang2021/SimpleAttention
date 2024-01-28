@@ -1,17 +1,23 @@
-const graphOptions = ['MSE_per_batch', 'Decision_boundary'];
-
-const modelOptions = ['heads2_embed64_no_act', 'heads2_embed8_no_act', 'heads8_embed32_no_act', 'linear_hid2_embed16_tanh', 'linear_hid1_embed16_relu', 'heads8_embed16_no_act', 'heads16_embed64_no_act', 'heads8_embed64_no_act', 'heads2_embed4_no_act', 'heads16_embed16_no_act', 'heads4_embed64_no_act', 'heads8_embed8_no_act', 'heads4_embed16_no_act', 'heads4_embed8_no_act', 'linear_hid2_embed8_tanh', 'heads16_embed32_no_act', 'heads4_embed32_no_act', 'heads2_embed32_no_act', 'heads32_embed64_no_act', 'linear_hid2_embed4_tanh', 'heads64_embed64_no_act', 'heads4_embed4_no_act', 'linear_hid1_embed32_relu', 'linear_hid1_embed8_relu', 'linear_hid1_embed4_relu', 'linear_hid2_embed32_tanh', 'heads2_embed16_no_act', 'heads32_embed32_no_act'];
-
-const datasetOptions = ['regress_plane', 'regress_gaussian'];
-
-
-window.onload = function() {
-    populateDropdowns();
-    updateDropdowns();
+// Function to fetch data from result.json
+function fetchData() {
+    fetch('result.json')
+        .then(response => {
+            if (!response.ok) {
+                throw new Error(`HTTP error! Status: ${response.status}`);
+            }
+            return response.json();
+        })
+        .then(data => {
+            populateDropdowns(data);
+            updateDropdowns();
+        })
+        .catch(error => {
+            console.error('Error fetching data:', error);
+        });
 }
 
 // Function to populate dropdowns with data
-function populateDropdowns(){
+function populateDropdowns(data){
     const graphDropdown = document.getElementById('graphName');
     const modelDropdown = document.getElementById('modelName');
     const datasetDropdown = document.getElementById('datasetName');
@@ -20,9 +26,9 @@ function populateDropdowns(){
     clearDropdown(modelDropdown);
     clearDropdown(datasetDropdown);
 
-    graphOptions.forEach(option => addOptionToDropdown(graphDropdown, option));
-    modelOptions.forEach(option => addOptionToDropdown(modelDropdown, option));
-    datasetOptions.forEach(option => addOptionToDropdown(datasetDropdown, option));
+    data.graphNames.forEach(option => addOptionToDropdown(graphDropdown, option));
+    data.modelNames.forEach(option => addOptionToDropdown(modelDropdown, option));
+    data.datasetNames.forEach(option => addOptionToDropdown(datasetDropdown, option));
 }
 
 // Function to clear dropdown options
@@ -37,6 +43,12 @@ function addOptionToDropdown(dropdown, option) {
     newOption.text = option;
     dropdown.add(newOption);
 }
+
+
+window.onload = function() {
+    fetchData();
+};
+
 
 // Function to update dropdowns based on selected options
 function updateDropdowns() {
