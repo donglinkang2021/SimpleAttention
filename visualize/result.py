@@ -12,9 +12,9 @@ for file in os.listdir("result/"):
 print(f"const graphOptions = {list(graph_name_set)};\n")
 print(f"const modelOptions = {list(model_name_set)};\n")
 print(f"const datasetOptions = {list(dataset_name_set)};\n")
-# data = {}
-# data["graphNames"] = list(graph_name_set)
-# data["modelNames"] = list(model_name_set)
-# data["datasetNames"] = list(dataset_name_set)
-# with open("visualize/result.json", "w") as f:
-#     json.dump(data, f)
+data = {}
+data["graphNames"] = list(graph_name_set)
+data["modelNames"] = list(model_name_set)
+data["datasetNames"] = list(dataset_name_set)
+with open("visualize/result.json", "w") as f:
+    json.dump(data, f)
