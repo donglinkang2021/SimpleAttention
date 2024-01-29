@@ -21,17 +21,14 @@ function fetchData() {
 
 // Function to populate dropdowns with data
 function populateDropdowns(){
-    const graphDropdown = document.getElementById('graphName');
-    const modelDropdown = document.getElementById('modelName');
     const datasetDropdown = document.getElementById('datasetName');
-
-    clearDropdown(graphDropdown);
-    clearDropdown(modelDropdown);
+    const modelDropdown = document.getElementById('modelName');
+    
     clearDropdown(datasetDropdown);
+    clearDropdown(modelDropdown);
 
     json_data.datasetNames.forEach(option => addOptionToDropdown(datasetDropdown, option));
     json_data.modelNames.forEach(option => addOptionToDropdown(modelDropdown, option));
-    json_data.graphNames.forEach(option => addOptionToDropdown(graphDropdown, option));
 
     updateDataset();
 }
@@ -70,13 +67,16 @@ window.onload = function() {
 // Function to update dropdowns based on selected options
 function updateDropdowns() {
     console.log("Dropdowns updated!");
-
-    const selectedGraph = document.getElementById('graphName').value;
-    const selectedModel = document.getElementById('modelName').value;
     const selectedDataset = document.getElementById('datasetName').value;
-    const imagePath = get_png_name(selectedGraph, selectedModel, selectedDataset);
-    const imageContainer = document.getElementById('imageContainer');
-    imageContainer.innerHTML = `<img src="${imagePath}" alt="Generated Image">`;
+    const selectedModel = document.getElementById('modelName').value;    
+    const graphDB = json_data.graphNames[0];
+    const graphLoss = json_data.graphNames[1];
+    const imagePathDB = get_png_name(graphDB, selectedModel, selectedDataset);
+    const imagePathLoss = get_png_name(graphLoss, selectedModel, selectedDataset);
+    const imageContainerDB = document.getElementById('imageContainerDB');
+    const imageContainerLoss = document.getElementById('imageContainerLoss');
+    imageContainerDB.innerHTML = `<img src="${imagePathDB}" alt="Decision Boundary" width="100%">`;
+    imageContainerLoss.innerHTML = `<img src="${imagePathLoss}" alt="Loss" width="100%">`;
 }
 
 function get_png_name(selectedGraph, selectedModel, selectedDataset) {
