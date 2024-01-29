@@ -3,7 +3,7 @@ import torch.nn as nn
 import torch.nn.functional as F
 import numpy as np
 from torch.utils.data import Dataset, DataLoader
-from dataset import classify_xor_data
+from dataset import classify_spiral_data
 from model import Heads_Reg
 from model import Linear_Reg_Gaussian
 
@@ -12,16 +12,16 @@ torch.manual_seed(2024)
 
 train_samples = 500
 val_samples = 500
-noise = 0.1 # a good para to test the model performance
+noise = 0.2 # a good para to test the model performance
 
 batch_size = 64
-num_epochs = 30
-eval_interval = 10
+num_epochs = 300
+eval_interval = 100
 learning_rate = 3e-2
 
 input_dim = 2 
 n_embd = 16 # att: n_embd:param 4:17 8:33 16:65 32:129 64:257
-n_head = 4
+n_head = 8
 output_dim = 2
 
 is_train_heads = True 
@@ -32,7 +32,7 @@ class ClassificationDataset(Dataset):
         super().__init__()
         self.num_samples = num_samples
         self.noise = noise
-        self.x, self.y, self.label = classify_xor_data(num_samples, noise)
+        self.x, self.y, self.label = classify_spiral_data(num_samples, noise)
         self.x = torch.from_numpy(self.x).float()
         self.y = torch.from_numpy(self.y).float()
         self.X = torch.stack([self.x, self.y], dim=1)
