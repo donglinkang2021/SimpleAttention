@@ -3,7 +3,7 @@ import torch.nn as nn
 import torch.nn.functional as F
 import numpy as np
 from torch.utils.data import Dataset, DataLoader
-from dataset import classify_two_gauss_data
+from dataset import classify_circle_data
 from model import Heads_Reg
 from model import Linear_Reg_Gaussian
 
@@ -12,25 +12,27 @@ torch.manual_seed(2024)
 
 train_samples = 500
 val_samples = 500
-noise = 0.5 # a good para to test the model performance
+noise = 0.1 # a good para to test the model performance
 
 batch_size = 64
-num_epochs = 3
-eval_interval = 1
+num_epochs = 30
+eval_interval = 10
 learning_rate = 3e-2
 
 input_dim = 2 
-n_embd = 16 # att: n_embd:param 4:17 8:33 16:65 32:129 64:257
-n_head = 8
+n_embd = 4 # att: n_embd:param 4:17 8:33 16:65 32:129 64:257
+n_head = 2
 output_dim = 2
 
+is_train_heads = True 
+# True: train heads; False: train linear regression
 
 class ClassificationDataset(Dataset):
     def __init__(self, num_samples, noise):
         super().__init__()
         self.num_samples = num_samples
         self.noise = noise
-        self.x, self.y, self.label = classify_two_gauss_data(num_samples, noise)
+        self.x, self.y, self.label = classify_circle_data(num_samples, noise)
         self.x = torch.from_numpy(self.x).float()
         self.y = torch.from_numpy(self.y).float()
         self.X = torch.stack([self.x, self.y], dim=1)
@@ -47,9 +49,10 @@ valset = ClassificationDataset(val_samples, noise)
 trainloader = DataLoader(trainset, batch_size=batch_size, shuffle=True)
 valloader = DataLoader(valset, batch_size=batch_size, shuffle=True)
     
-
-model = Heads_Reg(input_dim, n_embd, n_head, output_dim)
-# model = Linear_Reg_Gaussian(input_dim, n_embd, output_dim)
+if is_train_heads:
+    model = Heads_Reg(input_dim, n_embd, n_head, output_dim)
+else:
+    model = Linear_Reg_Gaussian(input_dim, n_embd, output_dim)
 # criterion = nn.MSELoss()
 criterion = nn.CrossEntropyLoss()
 optimizer = torch.optim.Adam(model.parameters(), lr=learning_rate)
