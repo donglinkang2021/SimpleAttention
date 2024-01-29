@@ -90,7 +90,7 @@ def draw_dataset(dataset:Dataset, title:str):
     plt.show()
 
 @torch.no_grad()
-def draw_decision_boundary(model:nn.Module, dataset:Dataset, title:str, is_save:bool=False):
+def draw_decision_boundary(model:nn.Module, dataset:Dataset, title:str, is_save:bool=False, task:str="regression"):
     """
     draw decision boundary of a model on a 2D dataset
     """
@@ -105,12 +105,19 @@ def draw_decision_boundary(model:nn.Module, dataset:Dataset, title:str, is_save:
     # Z = model(X)
     
     batch_size = 64
-    Z = torch.zeros(X.shape[0], 1)
+    if task != "regression":
+        Z = torch.zeros(X.shape[0], 2)
+    else:
+        Z = torch.zeros(X.shape[0], 1)
+        
     for i in range(0, X.shape[0], batch_size):
         end = min(i + batch_size, X.shape[0])
         batch_x = X[i:end]
         Z[i:end] = model(batch_x)
     
+    if task != "regression":
+        Z = torch.argmax(Z, dim=1)
+
     Z = Z.reshape(xx.shape)
     
     plt.figure(figsize=(8, 6))
