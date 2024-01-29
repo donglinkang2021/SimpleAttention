@@ -9,9 +9,9 @@ for file in os.listdir("result/"):
     graph_name_set.add(graph_name)
     model_name_set.add(model_name)
     dataset_name_set.add(dataset_name)
-print(f"const graphOptions = {list(graph_name_set)};\n")
-print(f"const modelOptions = {list(model_name_set)};\n")
-print(f"const datasetOptions = {list(dataset_name_set)};\n")
+# print(f"const graphOptions = {list(graph_name_set)};\n")
+# print(f"const modelOptions = {list(model_name_set)};\n")
+# print(f"const datasetOptions = {list(dataset_name_set)};\n")
 data = {}
 data["graphNames"] = list(graph_name_set)
 data["modelNames"] = list(model_name_set)

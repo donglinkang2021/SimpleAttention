@@ -46,11 +46,25 @@ pip install torch einops
 
 ## Model
 
-- take regress gaussian as example
-- MLP: 2 hidden layer, 32 hidden units (105 para), tanh activation 
+Here we provide two model, MLP and Heads, the difference is as follows:
+
+- MLP: 2 hidden layer, 8 hidden units (105 para), tanh activation 
 - Heads: 1 hidden layer, 8 hidden units (**33** para), **no activation** 
+
+## Visualize Training
+
+We use the following gif to visualize the training process, the left is the final output, the right is the hidden state.
+
+### regress_gaussian
 
 | Model | Final Output | Hidden |
 | :---: | :---: | :---: |
-| MLP | ![MLP](./visualize_train/linear/fin_16.gif) | ![MLP](./visualize_train/linear/hid_16.gif) |
-| Heads | ![Heads](./visualize_train/heads/fin_16.gif) | ![Heads](./visualize_train/heads/hid_16.gif) |
+| MLP | ![MLP](./visualize_train/regression/linear/fin_16.gif) | ![MLP](./visualize_train/regression/linear/hid_16.gif) |
+| Heads | ![Heads](./visualize_train/regression/heads/fin_16.gif) | ![Heads](./visualize_train/regression/heads/hid_16.gif) |
+
+### classify_spiral_data
+
+| Model | Final Output | Hidden |
+| :---: | :---: | :---: |
+| MLP | ![MLP](./visualize_train/classification/linear/fin_16.gif) | ![MLP](./visualize_train/classification/linear/hid_16.gif) |
+| Heads | ![Heads](./visualize_train/classification/heads/fin_16.gif) | ![Heads](./visualize_train/classification/heads/hid_16.gif) |
